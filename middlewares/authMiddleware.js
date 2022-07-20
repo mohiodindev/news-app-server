@@ -3,9 +3,12 @@ const { User } = require("../models/UserModel");
 
 const protect = async (req, res, next) => {
   let token;
-  if (req.headers.authorization) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     try {
-      token = req.headers.authorization;
+      token = req.headers.authorization.split(" ")[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       req.header = await User.findOne(decoded.id).select("-password");
       next();
