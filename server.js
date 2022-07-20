@@ -12,10 +12,8 @@ const port = process.env.PORT || 3000;
 
 //configure node enviroment
 
-if (process.env.NODE_ENV === "development") {
-  process.env.HOST = `http://localhost:${port}`;
-  app.use(morgan("dev"));
-}
+process.env.HOST = `http://localhost:${port}`;
+app.use(morgan("dev"));
 
 // connect to mongodb
 connectDB();
@@ -37,8 +35,5 @@ app.use("*", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(
-    `Server is running in ${process.env.NODE_ENV} mode on ${process.env.HOST}`
-      .green.bold
-  );
+  console.log(`Server is running  on ${process.env.HOST}`.green.bold);
 });
