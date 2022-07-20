@@ -1,7 +1,7 @@
 const { User } = require("../models/UserModel");
-const mailer = require("../utils/mailer");
+// const mailer = require("../utils/mailer");
 const generateToken = require("../utils/generateToken");
-const crypto = require("crypto");
+// const crypto = require("crypto");
 
 // register a new user
 const registerUser = async (req, res) => {
@@ -13,16 +13,17 @@ const registerUser = async (req, res) => {
       });
     }
     const userexists = await User.findOne({ email });
-    if (userexists && userexists.active) {
+    if (userexists) {
       return res.status(400).json({
+        success: false,
         msg: "User already exists please login",
       });
     }
-    if (userexists && !userexists.active) {
-      return res.status(400).json({
-        msg: "User already exists please activate your account",
-      });
-    }
+    // if (userexists && !userexists.active) {
+    //   return res.status(400).json({
+    //     msg: "User already exists please activate your account",
+    //   });
+    // }
     let user = new User({
       name,
       email,
@@ -30,32 +31,30 @@ const registerUser = async (req, res) => {
     });
     //     const token = generateToken(user);
     // generate 28 bit code to be sent to user
-    crypto.randomBytes(28, async (err, buffer) => {
-      // Ensure the code is unique
-      user.activeToken = user._id + buffer.toString("hex");
-      user.activeTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
-      var link =
-        "development" === process.env.NODE_ENV
-          ? `http://localhost:${process.env.PORT}/api/users/activate/${user.activeToken}`
-          : `https://${process.env.api_host}/api/users/activate/${user.activeToken}`;
+    // crypto.randomBytes(28, async (err, buffer) => {
+    //   // Ensure the code is unique
+    //   user.activeToken = user._id + buffer.toString("hex");
+    //   user.activeTokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+    //   var link =
+    //     "development" === process.env.NODE_ENV
+    //       ? `http://192.168.43.204.:${process.env.PORT}/api/users/activate/${user.activeToken}`
+    //       : `https://${process.env.api_host}/api/users/activate/${user.activeToken}`;
 
-      // send email to user
-      await mailer.send({
-        from: "" + process.env.EMAIL,
-        to: user.email,
-        subject: "Activate your account",
-        html: `<h1>Activate your account</h1>
-               <p>Please click on the link to activate your account</p>
-               <a href="${link}">Link</a>`,
-      });
-      user = await user.save();
-    });
+    //   // send email to user
+    //   await mailer.send({
+    //     from: "" + process.env.EMAIL,
+    //     to: user.email,
+    //     subject: "Activate your account",
+    //     html: `<h1>Activate your account</h1>
+    //            <p>Please click on the link to activate your account</p>
+    //            <a href="${link}">Link</a>`,
+    //   });
+    //   user = await user.save();
+    // });
 
     res.status(201).json({
       success: true,
-      msg:
-        "Account created successfully please check your email to activate your account" +
-        user.email,
+      msg: "Account created successfully please login ",
     });
   } catch (error) {
     res.status(500).json({
@@ -67,50 +66,50 @@ const registerUser = async (req, res) => {
 };
 
 // activate user account
-const activateUser = async (req, res) => {
-  try {
-    const activeToken = req.params.activeToken;
-    if (!activeToken) {
-      return res.status(400).json({
-        success: false,
-        msg: "No active token provided",
-      });
-    }
-    const user = await User.findOne({ activeToken });
-    console.log(user);
-    if (!user) {
-      return res.status(400).json({
-        success: false,
-        msg: "Invalid token or user does not exist",
-      });
-    }
-    if (user.active === true) {
-      return res.status(400).json({
-        success: false,
-        msg: "User already activated",
-      });
-    }
+// const activateUser = async (req, res) => {
+//   try {
+//     const activeToken = req.params.activeToken;
+//     if (!activeToken) {
+//       return res.status(400).json({
+//         success: false,
+//         msg: "No active token provided",
+//       });
+//     }
+//     const user = await User.findOne({ activeToken });
+//     console.log(user);
+//     if (!user) {
+//       return res.status(400).json({
+//         success: false,
+//         msg: "Invalid token or user does not exist",
+//       });
+//     }
+//     if (user.active === true) {
+//       return res.status(400).json({
+//         success: false,
+//         msg: "User already activated",
+//       });
+//     }
 
-    if (user.activeTokenExpires < Date.now()) {
-      return res.status(400).json({
-        success: false,
-        msg: "Token expired",
-      });
-    }
-    user.active = true;
-    await user.save();
-    res.status(200).json({
-      success: true,
-      msg: "Account activated successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      msg: "Error activating user",
-      error: error.msg,
-    });
-  }
-};
+//     if (user.activeTokenExpires < Date.now()) {
+//       return res.status(400).json({
+//         success: false,
+//         msg: "Token expired",
+//       });
+//     }
+//     user.active = true;
+//     await user.save();
+//     res.status(200).json({
+//       success: true,
+//       msg: "Account activated successfully",
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       msg: "Error activating user",
+//       error: error.msg,
+//     });
+//   }
+// };
 
 // login user
 const loginUser = async (req, res) => {
@@ -129,12 +128,12 @@ const loginUser = async (req, res) => {
         msg: "User does not exist",
       });
     }
-    if (user.active === false) {
-      return res.status(400).json({
-        success: false,
-        msg: "User not activated please activate your account ",
-      });
-    }
+    // if (user.active === false) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     msg: "User not activated please activate your account ",
+    //   });
+    // }
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
       return res.status(400).json({
@@ -150,7 +149,7 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        active: user.active,
+        // active: user.active,
         token: token,
       },
     });
@@ -175,7 +174,7 @@ const getUser = async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        active: user.active,
+        // active: user.active,
       },
     });
   } catch (error) {
@@ -223,7 +222,7 @@ const updateUser = async (req, res) => {
         name: user.name,
         email: user.email,
         avatar: user.avatar,
-        active: user.active,
+        // active: user.active,
         token: token,
       },
     });
@@ -238,7 +237,7 @@ const updateUser = async (req, res) => {
 
 module.exports = {
   registerUser,
-  activateUser,
+  // activateUser,
   loginUser,
   getUser,
   logoutUser,

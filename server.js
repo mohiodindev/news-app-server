@@ -1,10 +1,10 @@
 require("dotenv").config();
 require("colors");
-const { connectDB } = require("./config/db");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
+const { connectDB } = require("./config/db");
 
 const UserRoutes = require("./routes/UserRoutes");
 

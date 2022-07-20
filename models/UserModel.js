@@ -20,17 +20,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    active: {
-      type: Boolean,
-      default: false,
-    },
-    activeToken: {
-      type: String,
-      default: "",
-    },
-    activeTokenExpires: {
-      type: Date,
-    },
+    // active: {
+    //   type: Boolean,
+    //   default: false,
+    // },
+    // activeToken: {
+    //   type: String,
+    //   default: "",
+    // },
+    // activeTokenExpires: {
+    //   type: Date,
+    // },
   },
   { timestamps: true }
 );

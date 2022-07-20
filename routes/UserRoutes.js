@@ -4,7 +4,7 @@ const protect = require("../middlewares/authMiddleware");
 
 const {
   registerUser,
-  activateUser,
+  // activateUser,
   loginUser,
   getUser,
   logoutUser,
@@ -12,7 +12,7 @@ const {
 } = require("../controllers/userController");
 
 router.post("/register", registerUser);
-router.get("/activate/:activeToken", activateUser);
+// router.get("/activate/:activeToken", activateUser);
 router.post("/login", loginUser);
 router.get("/profile", protect, getUser);
 router.get("/logout", protect, logoutUser);
